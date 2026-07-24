@@ -189,18 +189,19 @@
 @utility scrollbar-thin {
   scrollbar-width: thin;
   scrollbar-color: var(--color-muted) transparent;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-muted);
+    border-radius: 9999px;
+  }
 }
 
-@utility scrollbar-thin::-webkit-scrollbar {
-  height: 6px;
-}
-
-@utility scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-@utility scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: var(--color-muted);
-  border-radius: 9999px;
-}
 
