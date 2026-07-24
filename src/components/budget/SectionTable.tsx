@@ -207,9 +207,10 @@ export function SectionTable({ section }: SectionTableProps) {
                   <td className="w-20 min-w-20 px-1 py-2 text-right">
                     <EditableCell value={item.quantity} />
                   </td>
-                  <td className="w-28 min-w-28 px-1 py-2 text-right">
+                  <td className="w-32 min-w-32 px-1 py-2 text-right">
                     <EditableCell value={item.unitPrice} />
                   </td>
+
                   <td className="w-24 min-w-24 whitespace-nowrap px-2 py-2 text-right font-medium tabular-nums text-foreground">
                     {formatCurrency(item.total)}
                   </td>
