@@ -62,6 +62,8 @@
   --color-budget-positive-bg: var(--budget-positive-bg);
   --color-budget-negative: var(--budget-negative);
   --color-budget-negative-bg: var(--budget-negative-bg);
+  --color-budget-warning: var(--budget-warning);
+  --color-budget-warning-bg: var(--budget-warning-bg);
   --color-budget-highlight: var(--budget-highlight);
   --color-budget-highlight-bg: var(--budget-highlight-bg);
   --color-budget-total: var(--budget-total);
@@ -109,10 +111,12 @@
   --sidebar-ring: oklch(0.60 0.12 260);
 
   /* Budget semantic colors */
-  --budget-positive: oklch(0.55 0.18 150);
-  --budget-positive-bg: oklch(0.95 0.03 150);
+  --budget-positive: oklch(0.50 0.16 150);
+  --budget-positive-bg: oklch(0.93 0.04 150);
   --budget-negative: oklch(0.55 0.22 25);
   --budget-negative-bg: oklch(0.95 0.03 25);
+  --budget-warning: oklch(0.55 0.16 85);
+  --budget-warning-bg: oklch(0.95 0.04 85);
   --budget-highlight: oklch(0.55 0.18 260);
   --budget-highlight-bg: oklch(0.95 0.03 260);
   --budget-total: oklch(0.45 0.12 260);
@@ -155,10 +159,12 @@
   --sidebar-ring: oklch(0.60 0.12 260);
 
   /* Budget semantic colors — dark */
-  --budget-positive: oklch(0.70 0.16 150);
+  --budget-positive: oklch(0.72 0.16 150);
   --budget-positive-bg: oklch(0.22 0.04 150);
   --budget-negative: oklch(0.70 0.18 25);
   --budget-negative-bg: oklch(0.22 0.04 25);
+  --budget-warning: oklch(0.72 0.14 85);
+  --budget-warning-bg: oklch(0.22 0.04 85);
   --budget-highlight: oklch(0.70 0.16 260);
   --budget-highlight-bg: oklch(0.22 0.04 260);
   --budget-total: oklch(0.85 0.06 260);
