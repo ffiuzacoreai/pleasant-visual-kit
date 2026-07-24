@@ -124,9 +124,10 @@ export function SectionTable({ section }: SectionTableProps) {
                 </th>
                 <th className="w-14 min-w-14 px-2 py-2.5 text-center">Unid.</th>
                 <th className="w-20 min-w-20 px-1 py-2.5 text-right">Qtde.</th>
-                <th className="w-28 min-w-28 px-1 py-2.5 text-right">
+                <th className="w-32 min-w-32 px-1 py-2.5 text-right">
                   Unit. Venda
                 </th>
+
                 <th className="w-24 min-w-24 px-2 py-2.5 text-right">Total</th>
                 <th
                   className="border-l bg-muted/30 px-2 py-2.5 text-center"
