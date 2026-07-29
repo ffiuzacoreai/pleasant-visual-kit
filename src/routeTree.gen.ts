@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VisitasRouteImport } from './routes/visitas'
 import { Route as FilaRouteImport } from './routes/fila'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VisitasRoute = VisitasRouteImport.update({
+  id: '/visitas',
+  path: '/visitas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FilaRoute = FilaRouteImport.update({
   id: '/fila',
   path: '/fila',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/fila': typeof FilaRoute
+  '/visitas': typeof VisitasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/fila': typeof FilaRoute
+  '/visitas': typeof VisitasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/fila': typeof FilaRoute
+  '/visitas': typeof VisitasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/fila'
+  fullPaths: '/' | '/fila' | '/visitas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/fila'
-  id: '__root__' | '/' | '/fila'
+  to: '/' | '/fila' | '/visitas'
+  id: '__root__' | '/' | '/fila' | '/visitas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FilaRoute: typeof FilaRoute
+  VisitasRoute: typeof VisitasRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/visitas': {
+      id: '/visitas'
+      path: '/visitas'
+      fullPath: '/visitas'
+      preLoaderRoute: typeof VisitasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/fila': {
       id: '/fila'
       path: '/fila'
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FilaRoute: FilaRoute,
+  VisitasRoute: VisitasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
