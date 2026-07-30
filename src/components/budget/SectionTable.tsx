@@ -1,72 +1,92 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  formatCurrency,
+  formatPercent,
+  type EditableField,
+  type ServiceItem,
+  type ServiceSection,
+} from "@/lib/budget";
 
-export interface ServiceItem {
-  id: string;
-  description: string;
-  subtitle?: string;
-  unit: string;
-  quantity: number;
-  unitPrice: number;
-  total: number;
-  matUnit: number;
-  matTotal: number;
-  moUnit: number;
-  moTotal: number;
-  nf: number;
-  roy: number;
-  balance: number;
-  profitPercent: number;
-}
-
-export interface ServiceSection {
-  id: string;
-  title: string;
-  items: ServiceItem[];
-}
+export type { ServiceItem, ServiceSection };
 
 interface SectionTableProps {
   section: ServiceSection;
+  /** Versão original para destacar valores alterados no rascunho. */
+  baseline?: ServiceSection;
+  editable?: boolean;
+  onChangeField?: (itemId: string, field: EditableField, value: number) => void;
 }
 
-function formatCurrency(value: number) {
+function parseNumber(raw: string) {
+  const normalized = raw.replace(/\./g, "").replace(",", ".").replace(/[^\d.-]/g, "");
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatNumber(value: number) {
   return value.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   });
-}
-
-function formatPercent(value: number) {
-  return `${value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
 }
 
 function EditableCell({
   value,
-  align = "right",
+  changed,
+  editable = true,
+  onCommit,
 }: {
   value: number;
-  align?: "left" | "right";
+  changed?: boolean;
+  editable?: boolean;
+  onCommit?: (value: number) => void;
 }) {
-  const formatted = value.toLocaleString("pt-BR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+  const [draft, setDraft] = useState(() => formatNumber(value));
+  const [focused, setFocused] = useState(false);
+
+  useEffect(() => {
+    if (!focused) setDraft(formatNumber(value));
+  }, [value, focused]);
+
+  const commit = () => {
+    setFocused(false);
+    const parsed = parseNumber(draft);
+    if (parsed === null) {
+      setDraft(formatNumber(value));
+      return;
+    }
+    if (parsed !== value) onCommit?.(parsed);
+    setDraft(formatNumber(parsed));
+  };
 
   return (
     <input
       type="text"
-      defaultValue={formatted}
+      value={draft}
+      readOnly={!editable}
+      onFocus={() => setFocused(true)}
+      onChange={(e) => setDraft(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.currentTarget.blur();
+      }}
       className={cn(
-        "box-border w-full rounded border border-transparent bg-transparent px-0.5 py-1 text-xs tabular-nums transition-colors hover:border-input focus:border-primary focus:bg-card focus:outline-none focus:ring-1 focus:ring-ring",
-        align === "right" && "text-right",
-        align === "left" && "text-left"
+        "box-border w-full rounded border border-transparent bg-transparent px-0.5 py-1 text-right text-xs tabular-nums transition-colors focus:border-primary focus:bg-card focus:outline-none focus:ring-1 focus:ring-ring",
+        editable ? "hover:border-input" : "cursor-default",
+        changed && "border-budget-warning/50 bg-budget-warning-bg font-medium text-budget-warning"
       )}
     />
   );
 }
 
-export function SectionTable({ section }: SectionTableProps) {
+export function SectionTable({
+  section,
+  baseline,
+  editable = true,
+  onChangeField,
+}: SectionTableProps) {
   const [isOpen, setIsOpen] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -87,6 +107,16 @@ export function SectionTable({ section }: SectionTableProps) {
       window.removeEventListener("resize", check);
     };
   }, []);
+
+  const baseById = new Map(
+    (baseline?.items ?? []).map((item) => [item.id, item] as const)
+  );
+
+  const isChanged = (item: ServiceItem, field: keyof ServiceItem) => {
+    const base = baseById.get(item.id);
+    if (!base) return false;
+    return Math.abs((base[field] as number) - (item[field] as number)) > 0.005;
+  };
 
   return (
     <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
@@ -205,23 +235,43 @@ export function SectionTable({ section }: SectionTableProps) {
                     {item.unit}
                   </td>
                   <td className="w-20 min-w-20 px-1 py-2 text-right">
-                    <EditableCell value={item.quantity} />
+                    <EditableCell
+                      value={item.quantity}
+                      editable={editable}
+                      changed={isChanged(item, "quantity")}
+                      onCommit={(v) => onChangeField?.(item.id, "quantity", v)}
+                    />
                   </td>
                   <td className="w-32 min-w-32 px-1 py-2 text-right">
-                    <EditableCell value={item.unitPrice} />
+                    <EditableCell
+                      value={item.unitPrice}
+                      editable={editable}
+                      changed={isChanged(item, "unitPrice")}
+                      onCommit={(v) => onChangeField?.(item.id, "unitPrice", v)}
+                    />
                   </td>
 
                   <td className="w-24 min-w-24 whitespace-nowrap px-2 py-2 text-right font-medium tabular-nums text-foreground">
                     {formatCurrency(item.total)}
                   </td>
                   <td className="w-24 min-w-24 border-l px-1 py-2 text-right">
-                    <EditableCell value={item.matUnit} />
+                    <EditableCell
+                      value={item.matUnit}
+                      editable={editable}
+                      changed={isChanged(item, "matUnit")}
+                      onCommit={(v) => onChangeField?.(item.id, "matUnit", v)}
+                    />
                   </td>
                   <td className="w-24 min-w-24 whitespace-nowrap px-2 py-2 text-right tabular-nums text-muted-foreground">
                     {formatCurrency(item.matTotal)}
                   </td>
                   <td className="w-24 min-w-24 px-1 py-2 text-right">
-                    <EditableCell value={item.moUnit} />
+                    <EditableCell
+                      value={item.moUnit}
+                      editable={editable}
+                      changed={isChanged(item, "moUnit")}
+                      onCommit={(v) => onChangeField?.(item.id, "moUnit", v)}
+                    />
                   </td>
                   <td className="w-24 min-w-24 whitespace-nowrap px-2 py-2 text-right tabular-nums text-muted-foreground">
                     {formatCurrency(item.moTotal)}
@@ -235,7 +285,14 @@ export function SectionTable({ section }: SectionTableProps) {
                   <td className="w-24 min-w-24 whitespace-nowrap px-2 py-2 text-right font-semibold tabular-nums text-budget-positive">
                     {formatCurrency(item.balance)}
                   </td>
-                  <td className="w-20 min-w-20 whitespace-nowrap px-2 py-2 text-right font-semibold tabular-nums text-budget-positive">
+                  <td
+                    className={cn(
+                      "w-20 min-w-20 whitespace-nowrap px-2 py-2 text-right font-semibold tabular-nums",
+                      isChanged(item, "profitPercent")
+                        ? "text-budget-warning"
+                        : "text-budget-positive"
+                    )}
+                  >
                     {formatPercent(item.profitPercent)}
                   </td>
                 </tr>
