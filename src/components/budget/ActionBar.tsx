@@ -55,7 +55,7 @@ export function ActionBar({
           <button
             type="button"
             onClick={onOfficialize}
-            className="inline-flex items-center gap-2 rounded-md bg-budget-positive px-3 py-2 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-2 rounded-md bg-budget-positive px-3 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
           >
             <BadgeCheck size={16} />
             Oficializar rascunho
