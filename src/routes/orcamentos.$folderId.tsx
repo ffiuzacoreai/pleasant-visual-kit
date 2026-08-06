@@ -146,13 +146,13 @@ function FolderPage() {
   const [name, setName] = useState(folder.name);
 
   const officialTotal = useMemo(
-    () => folder.budgets.find((b) => b.status === "aprovado")?.total ?? folder.budgets[0]?.total ?? 0,
+    () => folder.budgets.find((b: BudgetVersion) => b.status === "aprovado")?.total ?? folder.budgets[0]?.total ?? 0,
     [folder.budgets],
   );
 
   const ordered = useMemo(
     () =>
-      [...folder.budgets].sort((a, b) => {
+      [...folder.budgets].sort((a: BudgetVersion, b: BudgetVersion) => {
         const aOff = a.status === "aprovado" ? 0 : 1;
         const bOff = b.status === "aprovado" ? 0 : 1;
         if (aOff !== bOff) return aOff - bOff;
