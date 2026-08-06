@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VisitasRouteImport } from './routes/visitas'
 import { Route as FilaRouteImport } from './routes/fila'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OrcamentosIndexRouteImport } from './routes/orcamentos.index'
+import { Route as OrcamentosFolderIdRouteImport } from './routes/orcamentos.$folderId'
 
 const VisitasRoute = VisitasRouteImport.update({
   id: '/visitas',
@@ -28,35 +30,64 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrcamentosIndexRoute = OrcamentosIndexRouteImport.update({
+  id: '/orcamentos/',
+  path: '/orcamentos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrcamentosFolderIdRoute = OrcamentosFolderIdRouteImport.update({
+  id: '/orcamentos/$folderId',
+  path: '/orcamentos/$folderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/fila': typeof FilaRoute
   '/visitas': typeof VisitasRoute
+  '/orcamentos/$folderId': typeof OrcamentosFolderIdRoute
+  '/orcamentos/': typeof OrcamentosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/fila': typeof FilaRoute
   '/visitas': typeof VisitasRoute
+  '/orcamentos/$folderId': typeof OrcamentosFolderIdRoute
+  '/orcamentos': typeof OrcamentosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/fila': typeof FilaRoute
   '/visitas': typeof VisitasRoute
+  '/orcamentos/$folderId': typeof OrcamentosFolderIdRoute
+  '/orcamentos/': typeof OrcamentosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/fila' | '/visitas'
+  fullPaths:
+    | '/'
+    | '/fila'
+    | '/visitas'
+    | '/orcamentos/$folderId'
+    | '/orcamentos/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/fila' | '/visitas'
-  id: '__root__' | '/' | '/fila' | '/visitas'
+  to: '/' | '/fila' | '/visitas' | '/orcamentos/$folderId' | '/orcamentos'
+  id:
+    | '__root__'
+    | '/'
+    | '/fila'
+    | '/visitas'
+    | '/orcamentos/$folderId'
+    | '/orcamentos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FilaRoute: typeof FilaRoute
   VisitasRoute: typeof VisitasRoute
+  OrcamentosFolderIdRoute: typeof OrcamentosFolderIdRoute
+  OrcamentosIndexRoute: typeof OrcamentosIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +113,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/orcamentos/': {
+      id: '/orcamentos/'
+      path: '/orcamentos'
+      fullPath: '/orcamentos/'
+      preLoaderRoute: typeof OrcamentosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orcamentos/$folderId': {
+      id: '/orcamentos/$folderId'
+      path: '/orcamentos/$folderId'
+      fullPath: '/orcamentos/$folderId'
+      preLoaderRoute: typeof OrcamentosFolderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +134,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FilaRoute: FilaRoute,
   VisitasRoute: VisitasRoute,
+  OrcamentosFolderIdRoute: OrcamentosFolderIdRoute,
+  OrcamentosIndexRoute: OrcamentosIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
