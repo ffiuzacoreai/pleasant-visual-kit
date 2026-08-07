@@ -135,6 +135,7 @@ const NAV = [
   { to: "/orcamentos", label: "Pastas" },
   { to: "/fila", label: "Fila de revisão" },
   { to: "/visitas", label: "Visitas agendadas" },
+  { to: "/checklist", label: "Checklist" },
 ] as const;
 
 function RootComponent() {

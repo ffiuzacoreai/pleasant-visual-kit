@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VisitasRouteImport } from './routes/visitas'
 import { Route as FilaRouteImport } from './routes/fila'
+import { Route as ChecklistRouteImport } from './routes/checklist'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrcamentosIndexRouteImport } from './routes/orcamentos.index'
 import { Route as OrcamentosFolderIdRouteImport } from './routes/orcamentos.$folderId'
@@ -23,6 +24,11 @@ const VisitasRoute = VisitasRouteImport.update({
 const FilaRoute = FilaRouteImport.update({
   id: '/fila',
   path: '/fila',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChecklistRoute = ChecklistRouteImport.update({
+  id: '/checklist',
+  path: '/checklist',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -43,6 +49,7 @@ const OrcamentosFolderIdRoute = OrcamentosFolderIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/checklist': typeof ChecklistRoute
   '/fila': typeof FilaRoute
   '/visitas': typeof VisitasRoute
   '/orcamentos/$folderId': typeof OrcamentosFolderIdRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/checklist': typeof ChecklistRoute
   '/fila': typeof FilaRoute
   '/visitas': typeof VisitasRoute
   '/orcamentos/$folderId': typeof OrcamentosFolderIdRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/checklist': typeof ChecklistRoute
   '/fila': typeof FilaRoute
   '/visitas': typeof VisitasRoute
   '/orcamentos/$folderId': typeof OrcamentosFolderIdRoute
@@ -67,15 +76,23 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/checklist'
     | '/fila'
     | '/visitas'
     | '/orcamentos/$folderId'
     | '/orcamentos/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/fila' | '/visitas' | '/orcamentos/$folderId' | '/orcamentos'
+  to:
+    | '/'
+    | '/checklist'
+    | '/fila'
+    | '/visitas'
+    | '/orcamentos/$folderId'
+    | '/orcamentos'
   id:
     | '__root__'
     | '/'
+    | '/checklist'
     | '/fila'
     | '/visitas'
     | '/orcamentos/$folderId'
@@ -84,6 +101,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChecklistRoute: typeof ChecklistRoute
   FilaRoute: typeof FilaRoute
   VisitasRoute: typeof VisitasRoute
   OrcamentosFolderIdRoute: typeof OrcamentosFolderIdRoute
@@ -104,6 +122,13 @@ declare module '@tanstack/react-router' {
       path: '/fila'
       fullPath: '/fila'
       preLoaderRoute: typeof FilaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checklist': {
+      id: '/checklist'
+      path: '/checklist'
+      fullPath: '/checklist'
+      preLoaderRoute: typeof ChecklistRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -132,6 +157,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChecklistRoute: ChecklistRoute,
   FilaRoute: FilaRoute,
   VisitasRoute: VisitasRoute,
   OrcamentosFolderIdRoute: OrcamentosFolderIdRoute,
